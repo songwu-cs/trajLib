@@ -10,6 +10,8 @@ import java.util.*;
 public class EvolvingConvoy {
     public int startT;//从1开始计数
     public List<String> timestamps;
+
+    public List<Integer> clusterID;
     public List<Set<String>> clusters;
     public List<Map<String, Integer>> trackers;
     public int m, k, w;
@@ -20,13 +22,15 @@ public class EvolvingConvoy {
         this.w = w;
     }
 
-    public EvolvingConvoy(Set<String> cluster, String startTimestamp, int startT, int m, int k, int w) {
+    public EvolvingConvoy(Set<String> cluster, String startTimestamp, int startT, int m, int k, int w, int cluID) {
         timestamps = new ArrayList<>();
+        clusterID = new ArrayList<>();
         clusters = new ArrayList<>();
         trackers = new ArrayList<>();
 
         this.startT = startT;
         timestamps.add(startTimestamp);
+        clusterID.add(cluID);
         clusters.add(cluster);
         Map<String, Integer> firstTracker = new HashMap<>();
         for(String s : cluster)
@@ -38,7 +42,7 @@ public class EvolvingConvoy {
         this.w = w;
     }
 
-    //ecID, t, tID, shipID, count, role, stageID
+    //ecID, t, tID, shipID, count, role, stageID, clusterID
     public List<String> toString(String ecID) {
         List<String> answer = new ArrayList<>();
 
@@ -63,9 +67,9 @@ public class EvolvingConvoy {
             Set<String> dynaM = dynamicMembers(ts);
             Map<String, Integer> counter = trackers.get(arrayIndex);
             for(String perm : permM)
-                answer.add(String.join(",", ecID, ts, tID+"", perm, counter.get(perm)+"", "Static", stageID[arrayIndex]+""));
+                answer.add(String.join(",", ecID, ts, tID+"", perm, counter.get(perm)+"", "Static", stageID[arrayIndex]+"", clusterID.get(arrayIndex)+""));
             for(String dyna : dynaM)
-                answer.add(String.join(",", ecID, ts, tID+"", dyna, counter.get(dyna)+"", "Dynamic", stageID[arrayIndex]+""));
+                answer.add(String.join(",", ecID, ts, tID+"", dyna, counter.get(dyna)+"", "Dynamic", stageID[arrayIndex]+"", clusterID.get(arrayIndex)+""));
 
             tID++;
             arrayIndex++;
@@ -76,6 +80,10 @@ public class EvolvingConvoy {
 
     public void setTimestamps(List<String> timestamps){
         this.timestamps = timestamps;
+    }
+
+    public void setClusterID(List<Integer> clusterID) {
+        this.clusterID = clusterID;
     }
 
     public void setClusters(List<Set<String>> clusters) {
@@ -96,6 +104,7 @@ public class EvolvingConvoy {
         evolvingConvoy.startT = startT;
 
         evolvingConvoy.setTimestamps(ListGeneric.copy(timestamps));
+        evolvingConvoy.setClusterID(ListGeneric.copy(clusterID));
 
         List<Set<String>> lss = new ArrayList<>();
         lss.addAll(clusters);
@@ -165,10 +174,11 @@ public class EvolvingConvoy {
     }
 
     //id为数据集中的id
-    public EvolvingConvoy extend(Set<String> cluster, String timestamp, int id){
+    public EvolvingConvoy extend(Set<String> cluster, String timestamp, int id, int cluID){
         EvolvingConvoy answer = copy();
         answer.clusters.add(cluster);
         answer.timestamps.add(timestamp);
+        answer.clusterID.add(cluID);
         if(id - startT + 1 <= w){
             Map<String, Integer> lastTracker = MapGeneric.copy(trackers.get(trackers.size()-1));
             for(String s : cluster)

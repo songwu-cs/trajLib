@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Point implements Cloneable{
-    protected static String defaultDateTime = "2000-01-01 00:00:00";
+    protected static String defaultDateTime = "1970-01-01 00:00:00";
     protected static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private String datetimeStr;
     private double x;

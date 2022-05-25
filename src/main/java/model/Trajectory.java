@@ -130,11 +130,18 @@ public class Trajectory {
                         trajectory.strAttributes.put(extraAttribute.attrName, new ArrayList<>());
                 }
 
+                String lastTimestamp = Point.defaultDateTime;
                 for(String line : ss){
                     String[] parts = line.split(loadConfig.getSplitter());
                     String datetime = Point.defaultDateTime;
                     if(loadConfig.hasDateTime())
                         datetime = parts[loadConfig.getDatetimeIndex()];
+
+                    if(TwoTimestamp.diffInSeconds(datetime, lastTimestamp, Point.formatter) < loadConfig.getSampleGap())
+                        continue;
+                    else
+                        lastTimestamp = datetime;
+
                     trajectory.points.add(new Point(datetime,
                             Double.parseDouble(parts[loadConfig.getxIndex()]),
                             Double.parseDouble(parts[loadConfig.getyIndex()])));

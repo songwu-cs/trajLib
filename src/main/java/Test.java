@@ -23,7 +23,8 @@ public class Test {
                 .yIndex(2)
                 .datetimeIndex(3)
                 .addAttr(AttributeType.DoubleAttr, "speed", 4)
-                .addAttr(AttributeType.StrAttr, "city", 5);
+                .addAttr(AttributeType.StrAttr, "city", 5)
+                .sampleGap(3600*24 + 1);
 
         Point.setDateTimeFormatter("yyyy-MM-dd");
         List<Trajectory> trajectories = Trajectory.load(loadTrajectories);
@@ -49,12 +50,14 @@ public class Test {
     }
 
     public static void main(String[] args) throws IOException, ParseException, CloneNotSupportedException {
-        Point p = new Point("2022-04-01 00:00:00", 0, 0);
-        Point p2 = new Point("2022-04-01 00:10:00", 10, 0);
-        Point p3 = new Point("2022-04-01 00:20:00", 20, 0);
-        Trajectory trajectory = new Trajectory("0");
-        trajectory.setPoints(Arrays.asList(p, p2, p3));
-        System.out.println(Arrays.toString(trajectory.getVector2("2022-04-01 00:20:00")));
-        System.out.println(trajectory.contains("2022-04-01 00:20:00"));
+//        Point p = new Point("2022-04-01 00:00:00", 0, 0);
+//        Point p2 = new Point("2022-04-01 00:10:00", 10, 0);
+//        Point p3 = new Point("2022-04-01 00:20:00", 20, 0);
+//        Trajectory trajectory = new Trajectory("0");
+//        trajectory.setPoints(Arrays.asList(p, p2, p3));
+//        System.out.println(Arrays.toString(trajectory.getVector2("2022-04-01 00:20:00")));
+//        System.out.println(trajectory.contains("2022-04-01 00:20:00"));
+
+        testModel();
     }
 }

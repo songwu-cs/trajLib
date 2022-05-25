@@ -11,6 +11,7 @@ public class LoadTrajectories {
     private String filePath;
     private String splitter = ",";
     private boolean withHeader;
+    private int sampleGap = Integer.MIN_VALUE;
     private int xIndex, yIndex, datetimeIndex, trajIndex;
     private List<ExtraAttribute> attrs = new ArrayList<>();
 
@@ -26,6 +27,11 @@ public class LoadTrajectories {
 
     public LoadTrajectories xIndex(int xIndex){
         this.xIndex = xIndex;
+        return this;
+    }
+
+    public LoadTrajectories sampleGap(int seconds){
+        sampleGap = seconds;
         return this;
     }
 
@@ -64,6 +70,10 @@ public class LoadTrajectories {
 
     public boolean isWithHeader() {
         return withHeader;
+    }
+
+    public int getSampleGap(){
+        return sampleGap;
     }
 
     public int getxIndex() {
