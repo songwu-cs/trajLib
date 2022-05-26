@@ -1,6 +1,7 @@
 package model;
 
 import calculation.ListGeneric;
+import datetime.OneTimestamp;
 import datetime.TwoTimestamp;
 import io.LoadTrajectories;
 import io.bigdata.BatchFileReader;
@@ -154,6 +155,24 @@ public class Trajectory {
                             trajectory.strAttributes.get(extraAttribute.attrName).add(parts[extraAttribute.attrIndex]);
                         }
                     }
+                }
+
+                if(! loadConfig.getRegularFromTimestamp().equals("NONE")){
+                    trajectory.doubleAttributes.clear();
+                    trajectory.intAttributes.clear();
+                    trajectory.strAttributes.clear();
+
+                    List<Point> newPoints = new ArrayList<>();
+                    for(String s = loadConfig.getRegularFromTimestamp();
+                        s.compareTo(loadConfig.getRegularToTimestamp()) <= 0;
+                        s = OneTimestamp.add(s, 0, 0, loadConfig.getRegularGap(), Point.formatter)){
+                        if(trajectory.contains(s)){
+                            double[] coord = trajectory.getVector2(s);
+                            newPoints.add(new Point(s, coord[0], coord[1]));
+                        }
+                    }
+                    trajectory.points.clear();
+                    trajectory.points = newPoints;
                 }
             }
         }

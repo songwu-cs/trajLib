@@ -1,5 +1,5 @@
 trajID,x,y,timestamp,speed,city
 A,10,20,2000-10-01,5,Beijing
-A,16,30,2000-10-02,12,Beijing
+A,16,30,2000-10-06,12,Beijing
 B,10,20,2000-10-10,21,Dalian
 B,16,30,2000-10-11,22,Dalian

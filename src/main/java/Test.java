@@ -14,9 +14,9 @@ import java.util.Date;
 import java.util.List;
 
 public class Test {
-    public static void testModel() throws ParseException, IOException {
+    public static void testModel1() throws ParseException, IOException {
         LoadTrajectories loadTrajectories = new LoadTrajectories();
-        loadTrajectories.filePath("H:\\UpanSky\\DEDS_Java\\trajLib\\src\\main\\resources\\traj.csv")
+        loadTrajectories.filePath("H:\\UpanSky\\DEDS_Java\\trajLib\\src\\main\\resources\\traj1.csv")
                 .withHeader(true)
                 .trajIndex(0)
                 .xIndex(1)
@@ -24,7 +24,7 @@ public class Test {
                 .datetimeIndex(3)
                 .addAttr(AttributeType.DoubleAttr, "speed", 4)
                 .addAttr(AttributeType.StrAttr, "city", 5)
-                .sampleGap(3600*24 + 1);
+                .sampleGap(3600*24);
 
         Point.setDateTimeFormatter("yyyy-MM-dd");
         List<Trajectory> trajectories = Trajectory.load(loadTrajectories);
@@ -49,6 +49,30 @@ public class Test {
 
     }
 
+    public static void testModel2() throws ParseException, IOException {
+        LoadTrajectories loadTrajectories = new LoadTrajectories();
+        loadTrajectories.filePath("H:\\UpanSky\\DEDS_Java\\trajLib\\src\\main\\resources\\traj2.csv")
+                .withHeader(true)
+                .trajIndex(0)
+                .xIndex(1)
+                .yIndex(2)
+                .datetimeIndex(3)
+                .regularSampleGap("2000-10-01 00:00:00", "2000-10-11 00:00:00", 43200);
+
+        List<Trajectory> trajectories = Trajectory.load(loadTrajectories);
+
+        for(Trajectory trajectory : trajectories){
+            for(int i = 0; i < trajectory.size(); i++){
+                System.out.println(String.join(",", trajectory.getID(),
+                        trajectory.getPoint(i).getX()+"",
+                        trajectory.getPoint(i).getY()+"",
+                        trajectory.getPoint(i).getDatetimeStr()
+                ));
+            }
+        }
+
+    }
+
     public static void main(String[] args) throws IOException, ParseException, CloneNotSupportedException {
 //        Point p = new Point("2022-04-01 00:00:00", 0, 0);
 //        Point p2 = new Point("2022-04-01 00:10:00", 10, 0);
@@ -58,6 +82,6 @@ public class Test {
 //        System.out.println(Arrays.toString(trajectory.getVector2("2022-04-01 00:20:00")));
 //        System.out.println(trajectory.contains("2022-04-01 00:20:00"));
 
-        testModel();
+        testModel2();
     }
 }

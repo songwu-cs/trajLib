@@ -11,8 +11,17 @@ public class LoadTrajectories {
     private String filePath;
     private String splitter = ",";
     private boolean withHeader;
+
+    //第一个自定义选项开始
     private int sampleGap = Integer.MIN_VALUE;
     private int xIndex, yIndex, datetimeIndex, trajIndex;
+    //第一个自定义选项结束
+
+    //第二个自定义选项开始
+    private String regularFromTimestamp = "NONE", regularToTimestamp = "NONE";
+    private int regularGap = 0;
+    //第二个自定义选项结束
+
     private List<ExtraAttribute> attrs = new ArrayList<>();
 
     public LoadTrajectories filePath(String filePath){
@@ -32,6 +41,13 @@ public class LoadTrajectories {
 
     public LoadTrajectories sampleGap(int seconds){
         sampleGap = seconds;
+        return this;
+    }
+
+    public LoadTrajectories regularSampleGap(String fromTS, String toTS, int regularGap){
+        this.regularFromTimestamp = fromTS;
+        this.regularToTimestamp = toTS;
+        this.regularGap = regularGap;
         return this;
     }
 
@@ -98,5 +114,17 @@ public class LoadTrajectories {
 
     public boolean hasDateTime(){
         return datetimeIndex >= 0;
+    }
+
+    public String getRegularFromTimestamp() {
+        return regularFromTimestamp;
+    }
+
+    public String getRegularToTimestamp() {
+        return regularToTimestamp;
+    }
+
+    public int getRegularGap() {
+        return regularGap;
     }
 }
