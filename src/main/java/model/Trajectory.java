@@ -13,10 +13,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-public class Trajectory {
-    private HashMap<String, List<Double>> doubleAttributes;
-    private HashMap<String, List<Integer>> intAttributes;
-    private HashMap<String, List<String>> strAttributes;
+public class Trajectory{
+
+    HashMap<String, List<Double>> doubleAttributes;
+    HashMap<String, List<Integer>> intAttributes;
+    HashMap<String, List<String>> strAttributes;
     private List<Point> points;
     private String trajID;
 
@@ -116,66 +117,12 @@ public class Trajectory {
 
     public static List<Trajectory> load(LoadTrajectories loadConfig) throws IOException, ParseException {
         List<Trajectory> trajs = new ArrayList<>();
-        try(BatchFileReader reader = new BatchFileReader(loadConfig.getFilePath(),
-                loadConfig.getSplitter(), loadConfig.isWithHeader(), loadConfig.getTrajIndex())) {
-            for(List<String> ss : reader){
-                String trajID = ss.get(0).split(loadConfig.getSplitter())[loadConfig.getTrajIndex()];
-                Trajectory trajectory = new Trajectory(trajID);
+
+        try(TrajectoryIterator iterator = new TrajectoryIterator(loadConfig)){
+            for(Trajectory trajectory : iterator)
                 trajs.add(trajectory);
-                for(ExtraAttribute extraAttribute : loadConfig.getAttrs()){
-                    if(extraAttribute.type == AttributeType.DoubleAttr)
-                        trajectory.doubleAttributes.put(extraAttribute.attrName, new ArrayList<>());
-                    else if (extraAttribute.type == AttributeType.IntAttr)
-                        trajectory.intAttributes.put(extraAttribute.attrName, new ArrayList<>());
-                    else if (extraAttribute.type == AttributeType.StrAttr)
-                        trajectory.strAttributes.put(extraAttribute.attrName, new ArrayList<>());
-                }
+        };
 
-                String lastTimestamp = Point.defaultDateTime;
-                for(String line : ss){
-                    String[] parts = line.split(loadConfig.getSplitter());
-                    String datetime = Point.defaultDateTime;
-                    if(loadConfig.hasDateTime())
-                        datetime = parts[loadConfig.getDatetimeIndex()];
-
-                    if(TwoTimestamp.diffInSeconds(datetime, lastTimestamp, Point.formatter) < loadConfig.getSampleGap())
-                        continue;
-                    else
-                        lastTimestamp = datetime;
-
-                    trajectory.points.add(new Point(datetime,
-                            Double.parseDouble(parts[loadConfig.getxIndex()]),
-                            Double.parseDouble(parts[loadConfig.getyIndex()])));
-                    for(ExtraAttribute extraAttribute : loadConfig.getAttrs()){
-                        if(extraAttribute.type == AttributeType.DoubleAttr)
-                            trajectory.doubleAttributes.get(extraAttribute.attrName).add(Double.parseDouble(parts[extraAttribute.attrIndex]));
-                        else if (extraAttribute.type == AttributeType.IntAttr)
-                            trajectory.intAttributes.get(extraAttribute.attrName).add(Integer.parseInt(parts[extraAttribute.attrIndex]));
-                        else if (extraAttribute.type == AttributeType.StrAttr){
-                            trajectory.strAttributes.get(extraAttribute.attrName).add(parts[extraAttribute.attrIndex]);
-                        }
-                    }
-                }
-
-                if(! loadConfig.getRegularFromTimestamp().equals("NONE")){
-                    trajectory.doubleAttributes.clear();
-                    trajectory.intAttributes.clear();
-                    trajectory.strAttributes.clear();
-
-                    List<Point> newPoints = new ArrayList<>();
-                    for(String s = loadConfig.getRegularFromTimestamp();
-                        s.compareTo(loadConfig.getRegularToTimestamp()) <= 0;
-                        s = OneTimestamp.add(s, 0, 0, loadConfig.getRegularGap(), Point.formatter)){
-                        if(trajectory.contains(s)){
-                            double[] coord = trajectory.getVector2(s);
-                            newPoints.add(new Point(s, coord[0], coord[1]));
-                        }
-                    }
-                    trajectory.points.clear();
-                    trajectory.points = newPoints;
-                }
-            }
-        }
         return trajs;
     }
 }

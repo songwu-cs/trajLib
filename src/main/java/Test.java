@@ -1,9 +1,6 @@
 import calculation.ListString;
 import io.LoadTrajectories;
-import model.AttributeType;
-import model.ExtraAttribute;
-import model.Point;
-import model.Trajectory;
+import model.*;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -70,7 +67,29 @@ public class Test {
                 ));
             }
         }
+    }
 
+    public static void testModel3() throws IOException {
+        LoadTrajectories loadTrajectories = new LoadTrajectories();
+        loadTrajectories.filePath("H:\\UpanSky\\DEDS_Java\\trajLib\\src\\main\\resources\\traj2.csv")
+                .withHeader(true)
+                .trajIndex(0)
+                .xIndex(1)
+                .yIndex(2)
+                .datetimeIndex(3)
+                .regularSampleGap("2000-10-01 00:00:00", "2000-10-11 00:00:00", 43200);
+
+        try(TrajectoryIterator iterator = new TrajectoryIterator(loadTrajectories)){
+            for(Trajectory trajectory : iterator){
+                for(int i = 0; i < trajectory.size(); i++){
+                    System.out.println(String.join(",", trajectory.getID(),
+                            trajectory.getPoint(i).getX()+"",
+                            trajectory.getPoint(i).getY()+"",
+                            trajectory.getPoint(i).getDatetimeStr()
+                    ));
+                }
+            }
+        };
     }
 
     public static void main(String[] args) throws IOException, ParseException, CloneNotSupportedException {
@@ -82,6 +101,6 @@ public class Test {
 //        System.out.println(Arrays.toString(trajectory.getVector2("2022-04-01 00:20:00")));
 //        System.out.println(trajectory.contains("2022-04-01 00:20:00"));
 
-        testModel2();
+        testModel1();
     }
 }

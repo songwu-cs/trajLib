@@ -4,6 +4,7 @@ import model.AttributeType;
 import model.ExtraAttribute;
 import model.Trajectory;
 
+import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.List;
 
