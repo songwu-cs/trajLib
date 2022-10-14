@@ -17,8 +17,14 @@ public class TrajectoryIterator implements Closeable,Iterable<Trajectory> {
     private BatchFileReader batchFileReader;
     public TrajectoryIterator(LoadTrajectories loadConfig) throws IOException {
         this.loadConfig = loadConfig;
-        batchFileReader = new BatchFileReader(loadConfig.getFilePath(),loadConfig.getSplitter(),loadConfig.isWithHeader(), loadConfig.getTrajIndex());
+        int[] trajIndices = loadConfig.getTrajIndices();
+        if(trajIndices != null)
+            batchFileReader = new BatchFileReader(loadConfig.getFilePath(),loadConfig.getSplitter(),loadConfig.isWithHeader(), trajIndices);
+        else
+            batchFileReader = new BatchFileReader(loadConfig.getFilePath(),loadConfig.getSplitter(),loadConfig.isWithHeader(), loadConfig.getTrajIndex());
     }
+
+
 
     @Override
     public void close() throws IOException {
@@ -45,8 +51,16 @@ public class TrajectoryIterator implements Closeable,Iterable<Trajectory> {
 
         @Override
         public Trajectory next() {
-            String trajID = lines.get(0).split(loadConfig.getSplitter())[loadConfig.getTrajIndex()];
-            Trajectory trajectory = new Trajectory(trajID);
+            List<String> listID = new ArrayList<>();
+            if(loadConfig.getTrajIndices() != null){
+                String[] parts = lines.get(0).split(loadConfig.getSplitter());
+                for(int i : loadConfig.getTrajIndices()){
+                    listID.add(parts[i]);
+                }
+            }else
+                listID.add(lines.get(0).split(loadConfig.getSplitter())[loadConfig.getTrajIndex()]);
+
+            Trajectory trajectory = new Trajectory(String.join(",", listID));
 
             for(ExtraAttribute extraAttribute : loadConfig.getAttrs()){
                 if(extraAttribute.type == AttributeType.DoubleAttr)
@@ -66,8 +80,9 @@ public class TrajectoryIterator implements Closeable,Iterable<Trajectory> {
                 if(loadConfig.hasDateTime())
                     datetime = parts[loadConfig.getDatetimeIndex()];
 
-                if(TwoTimestamp.diffInSeconds(datetime, lastTimestamp, Point.formatter) < loadConfig.getSampleGap())
+                if(TwoTimestamp.diffInSeconds(datetime, lastTimestamp, Point.formatter) < loadConfig.getSampleGap()){
                     continue;
+                }
                 else
                     lastTimestamp = datetime;
 
@@ -114,5 +129,11 @@ public class TrajectoryIterator implements Closeable,Iterable<Trajectory> {
 
             return trajectory;
         }
+    }
+
+    public static void main(String[] args) {
+        List<String> ls = new ArrayList<>();
+        ls.add("A");
+        System.out.println(String.join(",", ls));
     }
 }

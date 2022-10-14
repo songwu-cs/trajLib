@@ -16,6 +16,8 @@ public class LoadTrajectories {
     //第一个自定义选项开始
     private int sampleGap = Integer.MIN_VALUE;
     private int xIndex, yIndex, datetimeIndex, trajIndex;
+    private int[] trajIndices;
+    private String trajIndicesHeader;
     //第一个自定义选项结束
 
     //第二个自定义选项开始
@@ -67,6 +69,16 @@ public class LoadTrajectories {
         return this;
     }
 
+    public LoadTrajectories trajIndices(int[] trajIndices){
+        this.trajIndices = trajIndices;
+        return this;
+    }
+
+    public LoadTrajectories trajIndicesHeader(String listHeader){
+        this.trajIndicesHeader = listHeader;
+        return this;
+    }
+
     public LoadTrajectories withHeader(boolean bool){
         this.withHeader = bool;
         return this;
@@ -107,6 +119,14 @@ public class LoadTrajectories {
 
     public int getTrajIndex() {
         return trajIndex;
+    }
+
+    public int[] getTrajIndices(){
+        return trajIndices;
+    }
+
+    public String getTrajIndicesHeader(){
+        return trajIndicesHeader;
     }
 
     public List<ExtraAttribute> getAttrs() {

@@ -1,19 +1,21 @@
 package model;
 
+import datetime.SimpleDateFormatExt;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Point implements Cloneable{
-    protected static String defaultDateTime = "1970-01-01 00:00:00";
-    protected static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    protected static String defaultDateTime = "2000-01-01 00:00:00";
+    protected static SimpleDateFormatExt formatter = new SimpleDateFormatExt("yyyy-MM-dd HH:mm:ss");
     private String datetimeStr;
     private double x;
     private double y;
 
     public static void setDateTimeFormatter(String format) throws ParseException {
-        SimpleDateFormat formatterNew = new SimpleDateFormat(format);
-        defaultDateTime = formatterNew.format(formatter.parse(defaultDateTime));
+        SimpleDateFormatExt formatterNew = new SimpleDateFormatExt(format);
+        defaultDateTime = formatterNew.formatExt(formatter.parse(defaultDateTime));
         formatter = formatterNew;
     }
 
